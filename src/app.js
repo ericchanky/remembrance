@@ -18,9 +18,6 @@ const store = createStore()
 
 new Vue({
   el: '#app',
-  components: { Layout },
   store,
-  render (createElem) {
-    return createElem('Layout')
-  },
+  render: createElem => createElem(Layout),
 })

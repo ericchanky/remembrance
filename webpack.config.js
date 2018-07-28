@@ -4,6 +4,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const autoprefixer = require('autoprefixer')
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -11,10 +14,25 @@ const dist = path.resolve(__dirname, './dist')
 
 module.exports = {
   mode: isProd ? 'production' : 'development',
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        parallel: true,
+        cache: true,
+      }),
+      new OptimizeCSSAssetsPlugin({}),
+    ],
+    splitChunks: {
+      chunks: 'all',
+      name: 'vendors',
+    },
+    nodeEnv: process.env.NODE_ENV,
+  },
   entry: './src/app.js',
   output: {
     path: dist,
     filename: 'app.[hash].js',
+    chunkFilename: '[name].[chunkhash].js',
   },
   module: {
     rules: [
@@ -38,7 +56,7 @@ module.exports = {
       {
         test: /\.s?(a|c)ss$/,
         use: [
-          'style-loader', // creates style nodes from JS strings
+          MiniCssExtractPlugin.loader,
           'css-loader', // translates CSS into CommonJS
           {
             loader: 'postcss-loader',
@@ -74,14 +92,16 @@ module.exports = {
     historyApiFallback: true,
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new HtmlWebpackPlugin({
-      template: './src/index.html',
-    }),
     new CleanWebpackPlugin([dist]),
     new VueLoaderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
     new CopyWebpackPlugin([
       { from: './manifest.json', to: '.' },
     ], {}),
+    new HtmlWebpackPlugin({ template: './src/index.html' }),
+    new MiniCssExtractPlugin({
+      filename: 'app.[contenthash].css',
+      chunkFilename: 'vendors.[contenthash].css',
+    }),
   ],
 }

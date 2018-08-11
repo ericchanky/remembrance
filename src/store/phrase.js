@@ -4,8 +4,6 @@ import uuidv4 from 'uuid/v4'
 import { fetchPhrase } from '../utils/fetch'
 import { randWithObj } from '../utils/rand'
 
-const loading = 'Loading...'
-
 export default {
   namespaced: true,
   state: {
@@ -51,11 +49,9 @@ export default {
       }
     },
     show ({ dispatch, commit, state }) {
-      if (Object.keys(state.phrases).length > 0 && (state.phrase == null || state.phrase.phrase === loading || moment(state.updated_at).add(1, 'hour').isSameOrBefore(moment()))) {
+      if (Object.keys(state.phrases).length > 0 && (state.phrase == null || moment(state.updated_at).add(1, 'hour').isSameOrBefore(moment()))) {
         commit('setPhrase', randWithObj(state.phrases))
         dispatch('automate')
-      } else if (Object.keys(state.phrases).length === 0) {
-        commit('setPhrase', { phrase: loading, author: '' })
       }
     },
     add ({ commit }, data) {

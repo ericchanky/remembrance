@@ -10,6 +10,7 @@ export default {
     wallpaper: '',
     overlay: true,
     updated_at: moment().format(),
+    frequency: 3, // hours
   },
   mutations: {
     addToList (state, data) {
@@ -28,6 +29,9 @@ export default {
     toggleOverlay (state) {
       state.overlay = !state.overlay
     },
+    updatedFrequency (state, data) {
+      state.frequency = Number(data) || 1
+    },
   },
   actions: {
     add ({ commit }, data) {
@@ -37,7 +41,7 @@ export default {
       commit('removeFromList', data)
     },
     show ({ commit, state }) {
-      if (state.list.length > 0 && (state.wallpaper === '' || moment(state.updated_at).add(3, 'hours').isBefore(moment()))) {
+      if (state.list.length > 0 && (state.wallpaper === '' || moment(state.updated_at).add(state.frequency, 'hours').isBefore(moment()))) {
         commit('setWallpaper', randWith(state.list))
       } else if (state.list.length === 0) {
         commit('setWallpaper', '')
@@ -45,6 +49,9 @@ export default {
     },
     toggleOverlay ({ commit }) {
       commit('toggleOverlay')
+    },
+    updateFrequency ({ commit }, data) {
+      commit('updatedFrequency', data)
     },
   },
 }

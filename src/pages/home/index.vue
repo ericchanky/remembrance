@@ -2,10 +2,12 @@
   <section id="page-phrase">
     <Wallpaper
       :image="wallpaper"
-      :overlay="overlay" />
+      :overlay="overlay"
+    />
     <Phrase
-      :phrase="phrase.phrase"
-      :author="phrase.author" />
+      :phrase="slogan.phrase"
+      :author="slogan.author"
+    />
   </section>
 </template>
 
@@ -21,6 +23,9 @@ export default {
   computed: {
     ...mapState('wallpaper', ['wallpaper', 'overlay']),
     ...mapState('phrase', ['phrase']),
+    slogan() {
+      return this.phrase == null ? {} : this.phrase
+    },
   },
   created() {
     this.$store.dispatch('wallpaper/show')

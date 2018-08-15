@@ -7,10 +7,18 @@ import route from './route'
 
 import { name } from '../../package.json'
 
-const vuexLocal = new VuexPersistence({
-  key: name,
+const phraseStore = new VuexPersistence({
+  key: `${name}-phrase`,
   strictMode: true,
   storage: window.localStorage,
+  modules: ['phrase'],
+})
+
+const wallpaperStore = new VuexPersistence({
+  key: `${name}-wallpaper`,
+  strictMode: true,
+  storage: window.localStorage,
+  modules: ['wallpaper'],
 })
 
 export default () => new Vuex.Store({
@@ -21,7 +29,7 @@ export default () => new Vuex.Store({
     route,
   },
   mutations: {
-    RESTORE_MUTATION: vuexLocal.RESTORE_MUTATION,
+    RESTORE_MUTATION: phraseStore.RESTORE_MUTATION,
   },
-  plugins: [vuexLocal.plugin],
+  plugins: [phraseStore.plugin, wallpaperStore.plugin],
 })

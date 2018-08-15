@@ -19,9 +19,19 @@
       <input
         :checked="overlay"
         type="checkbox"
-        @input="toggleOverlay" >
+        @input="toggleOverlay"
+      >
       Overlay
     </label>
+    <div>
+      <label>
+        Frequency (hours)
+        <input
+          v-model="storeFrequency"
+          class="uk-input"
+        >
+      </label>
+    </div>
   </div>
 </template>
 
@@ -42,9 +52,17 @@ export default {
     }
   },
   computed: {
-    ...mapState('wallpaper', ['overlay']),
+    ...mapState('wallpaper', ['overlay', 'frequency']),
     icon () {
       return this.fetching ? 'more' : 'upload'
+    },
+    storeFrequency: {
+      get () {
+        return this.frequency
+      },
+      set (value) {
+        this.$store.dispatch('wallpaper/updateFrequency', value)
+      },
     },
   },
   methods: {

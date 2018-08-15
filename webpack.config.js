@@ -12,7 +12,7 @@ const autoprefixer = require('autoprefixer')
 const isProd = process.env.NODE_ENV === 'production'
 const dist = path.resolve(__dirname, './dist')
 
-module.exports = {
+const config = {
   mode: isProd ? 'production' : 'development',
   optimization: {
     minimizer: [
@@ -92,12 +92,8 @@ module.exports = {
     historyApiFallback: true,
   },
   plugins: [
-    new CleanWebpackPlugin([dist]),
     new VueLoaderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new CopyWebpackPlugin([
-      { from: './manifest.json', to: '.' },
-    ], {}),
     new HtmlWebpackPlugin({ template: './src/index.html' }),
     new MiniCssExtractPlugin({
       filename: 'app.[contenthash].css',
@@ -105,3 +101,14 @@ module.exports = {
     }),
   ],
 }
+
+if (isProd) {
+  config.plugins.push(
+    new CleanWebpackPlugin([dist]),
+    new CopyWebpackPlugin([
+      { from: './manifest.json', to: '.' },
+    ], {}),
+  )
+}
+
+module.exports = config
